@@ -3,5 +3,4 @@ transformers
 torch
 peft
 safetensors
-accelerate
-bitsandbytes
+

@@ -9,7 +9,7 @@ HUGGINGFACE_TOKEN = st.secrets["HUGGINGFACE_TOKEN"]  # Store this in `.streamlit
 @st.cache_resource
 def load_pipeline():
     return pipeline(
-        ""text-generation"",
+        "text-generation",
         model="Marivanna27/fine-tuned-model_llama3_1_binary",
         token=HUGGINGFACE_TOKEN  # Use the token for authentication
     )

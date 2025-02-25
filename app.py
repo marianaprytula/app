@@ -30,19 +30,16 @@ st.write("""Ти спеціаліст з аналізу тональності �
 
 
 
-user_input = st.text_area("Введіть промпт:", "")
 
 if st.button("Провести класифікацію"):
     if user_input:
         # Tokenize input
         input_ids = tokenizer(user_input, return_tensors="pt").input_ids.to(model.device)
 
-        # Generate output
-        with torch.no_grad():
-            output_ids = model.generate(input_ids, max_length=100, top_p=0.9, temperature=0.7)
 
-        # Decode output
-        generated_text = tokenizer.decode(output_ids[0], skip_special_tokens=True)
+        outputs = model.generate(**inputs, max_length=inputs["input_ids"].shape[1] + 2, pad_token_id=tokenizer.eos_token_id)
+
+        generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
         
         # Display the result
         st.write("### Тональність:")

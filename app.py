@@ -1,6 +1,6 @@
 import streamlit as st
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 
 
@@ -13,13 +13,6 @@ ADAPTER_PATH = "Marivanna27/fine-tuned-model_llama3_1_binary"
 
 @st.cache_resource
 def load_model():
-    try:
-        quantization_config = BitsAndBytesConfig(
-            load_in_4bit=True,  # Enable 4-bit quantization
-            bnb_4bit_compute_dtype=torch.float16,  # Compute in float16
-            bnb_4bit_use_double_quant=True,  # Further reduce memory usage
-            bnb_4bit_quant_type="nf4"  # Use Normal Float 4 (NF4) quantization
-        )
 
         st.write("Loading tokenizer")
         tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, token=HUGGINGFACE_TOKEN)
@@ -28,7 +21,6 @@ def load_model():
         model = AutoModelForCausalLM.from_pretrained(
             BASE_MODEL,
             token=HUGGINGFACE_TOKEN,
-            quantization_config=quantization_config,
             device_map="auto"  # Auto-detect GPU if available
         )
 

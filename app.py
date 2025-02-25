@@ -14,23 +14,33 @@ ADAPTER_PATH = "Marivanna27/fine-tuned-model_llama3_1_binary"
 @st.cache_resource
 def load_model():
     try:
-        
+        quantization_config = BitsAndBytesConfig(
+            load_in_4bit=True,  # Enable 4-bit quantization
+            bnb_4bit_compute_dtype=torch.float16,  # Compute in float16
+            bnb_4bit_use_double_quant=True,  # Further reduce memory usage
+            bnb_4bit_quant_type="nf4"  # Use Normal Float 4 (NF4) quantization
+        )
+
+        st.write("Loading tokenizer")
         tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, token=HUGGINGFACE_TOKEN)
-        
-        
+
+        st.write("⏳ Loading base model with 4-bit quantization (this may take time)...")
         model = AutoModelForCausalLM.from_pretrained(
             BASE_MODEL,
             token=HUGGINGFACE_TOKEN,
+            quantization_config=quantization_config,
+            device_map="auto"  # Auto-detect GPU if available
         )
 
-
+        st.write("Loading LoRA adapter")
         model = PeftModel.from_pretrained(model, ADAPTER_PATH)
-        
+
         return model, tokenizer
     except Exception as e:
         st.error(f"🚨 Error loading model: {str(e)}")
         return None, None
 
+# Load model & tokenizer
 model, tokenizer = load_model()
 
 

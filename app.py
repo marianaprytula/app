@@ -19,9 +19,7 @@ def load_model():
 
         st.write("Loading base model (this can take several minutes)...")
         model = AutoModelForCausalLM.from_pretrained(
-            BASE_MODEL,
-            device_map="auto",
-            torch_dtype=torch.float16  # Speeds up loading
+            BASE_MODEL
         )
 
         st.write("⏳ Loading LoRA adapter...")

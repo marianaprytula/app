@@ -7,8 +7,6 @@ from peft import PeftModel
 HUGGINGFACE_TOKEN = st.secrets["HUGGINGFACE_TOKEN"]
 
 
-BASE_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
-ADAPTER_PATH = "Marivanna27/fine-tuned-model_llama3_1_binary"
 
 
 @st.cache_resource

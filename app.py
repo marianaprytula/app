@@ -10,7 +10,7 @@ MODEL_NAME = "Marivanna27/fine-tuned-model_llama3_1_binary"
 @st.cache_resource
 def load_model():
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, token=HUGGINGFACE_TOKEN)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, token=HUGGINGFACE_TOKEN, torch_dtype=torch.float16, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, token=HUGGINGFACE_TOKEN)
     return model, tokenizer
 
 # Load model & tokenizer
@@ -34,10 +34,10 @@ st.write("""Ти спеціаліст з аналізу тональності �
 if st.button("Провести класифікацію"):
     if user_input:
         # Tokenize input
-        input_ids = tokenizer(user_input, return_tensors="pt").input_ids.to(model.device)
+        input_ids = tokenizer(user_input, return_tensors="pt")
 
 
-        outputs = model.generate(**inputs, max_length=inputs["input_ids"].shape[1] + 2, pad_token_id=tokenizer.eos_token_id)
+        outputs = model.generate(**inputs, max_length=inputs["input_ids"].shape[1] + 2)
 
         generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
         

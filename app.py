@@ -1,22 +1,40 @@
 import streamlit as st
-from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import PeftModel
 
 
 HUGGINGFACE_TOKEN = st.secrets["HUGGINGFACE_TOKEN"]
 
-MODEL_NAME = "Marivanna27/fine-tuned-model_llama3_1_binary"
+
+BASE_MODEL = "meta-llama/Llama-3.1-8B-Instruct"
+ADAPTER_PATH = "Marivanna27/fine-tuned-model_llama3_1_binary"
+
 
 @st.cache_resource
 def load_model():
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, token=HUGGINGFACE_TOKEN)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, token=HUGGINGFACE_TOKEN)
-    return model, tokenizer
+    try:
+        
+        tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, token=HUGGINGFACE_TOKEN)
+        
+        
+        model = AutoModelForCausalLM.from_pretrained(
+            BASE_MODEL,
+            token=HUGGINGFACE_TOKEN,
+        )
 
-# Load model & tokenizer
+
+        model = PeftModel.from_pretrained(model, ADAPTER_PATH)
+        
+        return model, tokenizer
+    except Exception as e:
+        st.error(f"🚨 Error loading model: {str(e)}")
+        return None, None
+
 model, tokenizer = load_model()
 
-# Streamlit UI
+
+
 st.title("LLaMA3 бінарна класифікація тональності тексту")
 st.write("Введіть промпт та текст, який потрібно класифікувати. Відповідь 0 вказує, що текст негативний, а 1 - якщо текст позитивний.")
 st.write("Варіанти пропмта для проведення бінарної класифікації тональностей:")

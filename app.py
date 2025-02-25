@@ -7,6 +7,8 @@ from peft import PeftModel
 HUGGINGFACE_TOKEN = st.secrets["HUGGINGFACE_TOKEN"]
 
 
+BASE_MODEL = st.secrets["BASE_MODEL"] 
+ADAPTER_PATH = st.secrets["ADAPTER_PATH"] 
 
 
 @st.cache_resource

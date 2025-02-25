@@ -13,28 +13,27 @@ ADAPTER_PATH = "Marivanna27/fine-tuned-model_llama3_1_binary"
 
 @st.cache_resource
 def load_model():
+    try:
+        st.write("Loading tokenizer...")
+        tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
 
-        st.write("Loading tokenizer")
-        tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL, token=HUGGINGFACE_TOKEN)
-
-        st.write("⏳ Loading base model with 4-bit quantization (this may take time)...")
+        st.write("Loading base model (this can take several minutes)...")
         model = AutoModelForCausalLM.from_pretrained(
             BASE_MODEL,
-            token=HUGGINGFACE_TOKEN,
-            device_map="auto"  # Auto-detect GPU if available
+            device_map="auto",
+            torch_dtype=torch.float16  # Speeds up loading
         )
 
-        st.write("Loading LoRA adapter")
+        st.write("⏳ Loading LoRA adapter...")
         model = PeftModel.from_pretrained(model, ADAPTER_PATH)
 
+        st.success("✅ Model and adapter loaded successfully!")
         return model, tokenizer
     except Exception as e:
         st.error(f"🚨 Error loading model: {str(e)}")
         return None, None
 
-# Load model & tokenizer
 model, tokenizer = load_model()
-
 
 
 st.title("LLaMA3 бінарна класифікація тональності тексту")
